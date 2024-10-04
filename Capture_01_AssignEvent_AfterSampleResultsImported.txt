@@ -2,4 +2,8 @@ UPDATE capture.tbl_sample_results r
 SET event_id = e.id
 FROM capture.tbl_event e
 WHERE e.speno = r.speno
-AND event_id IS NULL
+AND event_id IS NULL;
+
+SELECT DISTINCT speno
+FROM capture.tbl_sample_results
+WHERE event_id IS NULL;
