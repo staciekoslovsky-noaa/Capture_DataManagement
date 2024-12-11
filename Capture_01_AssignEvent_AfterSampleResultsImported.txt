@@ -1,9 +1,17 @@
+--UPDATE capture.tbl_sample_results
+--SET speno = 'PV2020 OP-052'
+--WHERE speno = 'PV2020 OP-52';
+
+--UPDATE capture.tbl_sample_results 
+--SET speno = TRIM(speno)
+--WHERE event_id IS NULL;
+
 UPDATE capture.tbl_sample_results r
 SET event_id = e.id
 FROM capture.tbl_event e
 WHERE e.speno = r.speno
 AND event_id IS NULL;
 
-SELECT DISTINCT speno
-FROM capture.tbl_sample_results
-WHERE event_id IS NULL;
+SELECT DISTINCT speno, results_file
+FROM capture.qa_results_missing_event
+ORDER BY results_file, speno;
