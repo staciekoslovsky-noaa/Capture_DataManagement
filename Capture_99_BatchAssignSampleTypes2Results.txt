@@ -1,0 +1,168 @@
+--Updated 31DEC2024
+--Based on information in this GoogleSheet: https://docs.google.com/spreadsheets/d/10t-Rs9Y-qCEOSoaSdKiMsssFAx3RAVppTCI45oXG4M8/edit?gid=0#gid=0
+
+--Set to hair
+UPDATE capture.tbl_sample_results
+SET sample_type_lku = 'HA'
+WHERE results_file = 'PV2014-2016_FurSI_ToHZiel_15Jun2021.xlsx'
+AND sample_type_lku IS NULL;
+
+UPDATE capture.tbl_sample_results
+SET sample_type_lku = 'HA'
+WHERE results_file = 'SI fur_2016-2018 ice seals, 2017 Dbay Pv_6Sep2019.xlsx'
+AND sample_type_lku IS NULL;
+
+--Set to nasal swab
+UPDATE capture.tbl_sample_results
+SET sample_type_lku = 'NS'
+WHERE (result_type_lku = 'INFL'
+OR result_type_lku = 'MORB')
+AND sample_type_lku IS NULL;
+
+--Set to plasma
+UPDATE capture.tbl_sample_results
+SET sample_type_lku = 'PL'
+WHERE (result_type_lku = 'HAPT')
+AND sample_type_lku IS NULL;
+
+--Set to serum
+UPDATE capture.tbl_sample_results
+SET sample_type_lku = 'SE'
+WHERE (result_type_lku = 'ALBU'
+OR result_type_lku = 'BILI'
+OR result_type_lku = 'BRU1'
+OR result_type_lku = 'BRU2'
+OR result_type_lku = 'BRUC'
+OR result_type_lku = 'CALC'
+OR result_type_lku = 'CHLO'
+OR result_type_lku = 'CHOL'
+OR result_type_lku = 'CREA'
+OR result_type_lku = 'GLOB'
+OR result_type_lku = 'GLUC'
+OR result_type_lku = 'IGGx'
+OR result_type_lku = 'INFS'
+OR result_type_lku = 'INFR'
+OR result_type_lku = 'IRON'
+OR result_type_lku = 'ISPC'
+OR result_type_lku = 'LBRA'
+OR result_type_lku = 'LCAN'
+OR result_type_lku = 'LGRI'
+OR result_type_lku = 'LHAR'
+OR result_type_lku = 'LICT'
+OR result_type_lku = 'LPOM'
+OR result_type_lku = 'MAGN'
+OR result_type_lku = 'MLVA'
+OR result_type_lku = 'PDVx'
+OR result_type_lku = 'PHA1'
+OR result_type_lku = 'PHA2'
+OR result_type_lku = 'PHHV'
+OR result_type_lku = 'PHOS'
+OR result_type_lku = 'POTA'
+OR result_type_lku = 'SARC'
+OR result_type_lku = 'SODI'
+OR result_type_lku = 'TPRO'
+OR result_type_lku = 'TOXO'
+OR result_type_lku = 'UREA')
+AND sample_type_lku IS NULL;
+
+--Set to urine
+UPDATE capture.tbl_sample_results
+SET sample_type_lku = 'UR'
+WHERE (result_type_lku = 'DOMO'
+OR result_type_lku = 'SAXI')
+AND sample_type_lku IS NULL;
+
+--Set to whisker
+UPDATE capture.tbl_sample_results
+SET sample_type_lku = 'WH'
+WHERE whisker_segment_num IS NOT NULL
+AND sample_type_lku IS NULL;
+--15350 records updated!
+
+UPDATE capture.tbl_sample_results
+SET sample_type_lku = 'WH'
+WHERE results_file = 'PEP_VIB_SI_Sept2021.xlsx'
+AND sample_type_lku IS NULL;
+
+--Set to whole blood
+UPDATE capture.tbl_sample_results
+SET sample_type_lku = 'WB'
+WHERE (result_type_lku = 'BASC'
+OR result_type_lku = 'BASP'
+OR result_type_lku = 'EOSC'
+OR result_type_lku = 'EOSP'
+OR result_type_lku = 'HCTP'
+OR result_type_lku = 'HEM1'
+OR result_type_lku = 'HEM2'
+OR result_type_lku = 'HGBx'
+OR result_type_lku = 'LYMC'
+OR result_type_lku = 'LYMP'
+OR result_type_lku = 'MCHx'
+OR result_type_lku = 'MCHC'
+OR result_type_lku = 'MCVx'
+OR result_type_lku = 'MEME'
+OR result_type_lku = 'MONC'
+OR result_type_lku = 'MONP'
+OR result_type_lku = 'MPVx'
+OR result_type_lku = 'NEUC'
+OR result_type_lku = 'NEUP'
+OR result_type_lku = 'NEUB'
+OR result_type_lku = 'NEUS'
+OR result_type_lku = 'PCTP'
+OR result_type_lku = 'PCV1'
+OR result_type_lku = 'PCV2'
+OR result_type_lku = 'PDWC'
+OR result_type_lku = 'PDWS'
+OR result_type_lku = 'PLTC'
+OR result_type_lku = 'PRO1'
+OR result_type_lku = 'PRO2'
+OR result_type_lku = 'PRVE'
+OR result_type_lku = 'PRVR'
+OR result_type_lku = 'PRVW'
+OR result_type_lku = 'RBCC'
+OR result_type_lku = 'RDWC'
+OR result_type_lku = 'RDWS'
+OR result_type_lku = 'PRSD'
+OR result_type_lku = 'SELE'
+OR result_type_lku = 'WBCC'
+OR result_type_lku = 'WBCT'
+OR result_type_lku = 'WBCL'
+OR result_type_lku = 'WBCM')
+AND sample_type_lku IS NULL;
+
+--Count of those to manually update
+SELECT *
+FROM capture.tbl_sample_results
+WHERE result_type_lku = 'TMER';
+
+--Results missing sample type
+SELECT id, speno, result_type_lku, result_value, whisker_segment_num, results_file
+FROM capture.tbl_sample_results
+WHERE sample_type_lku IS NULL
+ORDER BY results_file;
+
+--SAWT
+SELECT DISTINCT results_file, sample_type_lku
+FROM capture.tbl_sample_results
+WHERE result_type_lku = 'SAWT'
+ORDER BY results_file;
+
+UPDATE capture.tbl_sample_results
+SET sample_type_lku = 'HA'
+WHERE result_type_lku = 'SAWT' AND
+(results_file = 'PV2014-2016_FurSI_ToHZiel_15Jun2021.xlsx'
+OR results_file = 'PV2016 FUR_To HZiel_28Jun2019.xlsx'
+OR results_file = 'SI fur_2016-2018 ice seals, 2017 Dbay Pv_6Sep2019.xlsx');
+
+UPDATE capture.tbl_sample_results
+SET sample_type_lku = 'WH'
+WHERE result_type_lku = 'SAWT' AND
+(results_file = 'PEP_PV_VIB_SI_Export15May2020.xlsx'
+OR results_file = 'PV_SI_VIB_updated9Sep2020 for MML contract NFFS7300-19-03252.xlsx');
+
+--Missing whisker segment number data
+SELECT *
+FROM capture.tbl_sample_results
+WHERE whisker_segment_num IS NULL
+AND sample_type_lku = 'WH'
+ORDER BY results_file;
