@@ -38,3 +38,5 @@ speno <- RPostgreSQL::dbGetQuery(con, "SELECT speno, capture_type, common_name, 
 
 RPostgreSQL::dbDisconnect(con)
 rm(con)
+
+# TEST
