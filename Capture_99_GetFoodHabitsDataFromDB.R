@@ -8,17 +8,19 @@ con <- RPostgreSQL::dbConnect(PostgreSQL(),
                               password = Sys.getenv("user_pw"))
 
 # Get data from DB for ribbon and spotted seals
+summ_prey_by_species <- RPostgreSQL::dbGetQuery(con, "SELECT * FROM capture.summ_prey_by_species WHERE SPENO LIKE \'PL%\' OR SPENO LIKE \'HF%\'")
+
 # Pulls food habits: prey data
 prey <- RPostgreSQL::dbGetQuery(con, "SELECT * FROM capture.tbl_sample_results_food_prey WHERE SPENO LIKE \'PL%\' OR SPENO LIKE \'HF%\'")
 
 # Pulls food habits: bone presence data
-bones <- RPostgreSQL::dbGetQuery(con, "SELECT p.speno, bone FROM capture.tbl_sample_results_food_bones b 
+bones <- RPostgreSQL::dbGetQuery(con, "SELECT food_prey_id, p.speno, bone FROM capture.tbl_sample_results_food_bones b 
                                  INNER JOIN capture.tbl_sample_results_food_prey p ON p.id = b.food_prey_id
                                  LEFT JOIN capture.lku_bone USING (bone_lku)
                                  WHERE SPENO LIKE \'PL%\' OR SPENO LIKE \'HF%\'")
 
 # Pulls food habits: measurements data
-measure <- RPostgreSQL::dbGetQuery(con, "SELECT p.speno, o.prey_condition AS oto_condition, oto_length_mm, bone_measure_mm, b.prey_condition AS bone_condition, bone
+measure <- RPostgreSQL::dbGetQuery(con, "SELECT food_prey_id, p.speno, o.prey_condition AS oto_condition, oto_length_mm, bone_measure_mm, b.prey_condition AS bone_condition, bone
                                   FROM capture.tbl_sample_results_food_measure m 
                                   INNER JOIN capture.tbl_sample_results_food_prey p ON p.id = m.food_prey_id
                                   LEFT JOIN capture.lku_prey_condition o ON m.oto_condition_lku = o.prey_condition_lku
@@ -38,5 +40,3 @@ speno <- RPostgreSQL::dbGetQuery(con, "SELECT speno, capture_type, common_name, 
 
 RPostgreSQL::dbDisconnect(con)
 rm(con)
-
-# TEST
