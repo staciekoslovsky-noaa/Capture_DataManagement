@@ -25,7 +25,7 @@ measure <- RPostgreSQL::dbGetQuery(con, "SELECT food_prey_id, p.speno, o.prey_co
                                   INNER JOIN capture.tbl_sample_results_food_prey p ON p.id = m.food_prey_id
                                   LEFT JOIN capture.lku_prey_condition o ON m.oto_condition_lku = o.prey_condition_lku
                                   LEFT JOIN capture.lku_prey_condition b ON m.oto_condition_lku = b.prey_condition_lku
-                                  LEFT JOIN capture.lku_bone USING (bone_lku)
+                                  LEFT JOIN capture.lku_prey_bone USING (bone_lku)
                                   WHERE SPENO LIKE \'PL%\' OR SPENO LIKE \'HF%\'")
 
 # PUlls capture data for all ribbon and spotted seals
