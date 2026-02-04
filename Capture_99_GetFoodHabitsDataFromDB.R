@@ -16,7 +16,7 @@ prey <- RPostgreSQL::dbGetQuery(con, "SELECT * FROM capture.tbl_sample_results_f
 # Pulls food habits: bone presence data
 bones <- RPostgreSQL::dbGetQuery(con, "SELECT food_prey_id, p.speno, bone FROM capture.tbl_sample_results_food_bones b 
                                  INNER JOIN capture.tbl_sample_results_food_prey p ON p.id = b.food_prey_id
-                                 LEFT JOIN capture.lku_bone USING (bone_lku)
+                                 LEFT JOIN capture.lku_prey_bone USING (bone_lku)
                                  WHERE SPENO LIKE \'PL%\' OR SPENO LIKE \'HF%\'")
 
 # Pulls food habits: measurements data
