@@ -11,21 +11,28 @@ con <- RPostgreSQL::dbConnect(PostgreSQL(),
 summ_prey_by_species <- RPostgreSQL::dbGetQuery(con, "SELECT * FROM capture.summ_prey_by_species WHERE SPENO LIKE \'PL%\' OR SPENO LIKE \'HF%\'")
 
 # Pulls food habits: prey data
-prey <- RPostgreSQL::dbGetQuery(con, "SELECT * FROM capture.tbl_sample_results_food_prey WHERE SPENO LIKE \'PL%\' OR SPENO LIKE \'HF%\'")
+prey <- RPostgreSQL::dbGetQuery(con, "SELECT id as food_prey_id, speno, series_num, date_identified, identified_by, prey_species
+                                num_oto_left, num_oto_right, num_oto_unk, num_beak_lower, num_beak_upper, 
+                                num_good, num_fair, num_poor, prey_age, prey_comments
+                                FROM capture.tbl_sample_results_food_prey 
+                                LEFT JOIN capture.lku_prey_species USING (prey_species_lku)
+                                WHERE SPENO LIKE \'PL%\' OR SPENO LIKE \'HF%\'")
 
 # Pulls food habits: bone presence data
-bones <- RPostgreSQL::dbGetQuery(con, "SELECT food_prey_id, p.speno, bone FROM capture.tbl_sample_results_food_bones b 
+bones <- RPostgreSQL::dbGetQuery(con, "SELECT food_prey_id, p.speno, bone, bone_side, bone_condition, bone_count FROM capture.tbl_sample_results_food_bones b 
                                  INNER JOIN capture.tbl_sample_results_food_prey p ON p.id = b.food_prey_id
                                  LEFT JOIN capture.lku_prey_bone USING (bone_lku)
+                                 LEFT JOIN capture.lku_prey_bone_side USING (bone_side_lku)
+                                 LEFT JOIN capture.lku_prey_bone_condition USING (bone_condition_lku)
                                  WHERE SPENO LIKE \'PL%\' OR SPENO LIKE \'HF%\'")
 
 # Pulls food habits: measurements data
-measure <- RPostgreSQL::dbGetQuery(con, "SELECT food_prey_id, p.speno, o.prey_condition AS oto_condition, oto_length_mm, bone_measure_mm, b.prey_condition AS bone_condition, bone
+measure <- RPostgreSQL::dbGetQuery(con, "SELECT food_prey_id, p.speno, bone_measure_mm, bone, bone_condition, bone_side
                                   FROM capture.tbl_sample_results_food_measure m 
                                   INNER JOIN capture.tbl_sample_results_food_prey p ON p.id = m.food_prey_id
-                                  LEFT JOIN capture.lku_prey_condition o ON m.oto_condition_lku = o.prey_condition_lku
-                                  LEFT JOIN capture.lku_prey_condition b ON m.oto_condition_lku = b.prey_condition_lku
                                   LEFT JOIN capture.lku_prey_bone USING (bone_lku)
+                                  LEFT JOIN capture.lku_prey_bone_side USING (bone_side_lku)
+                                  LEFT JOIN capture.lku_prey_bone_condition USING (bone_condition_lku)
                                   WHERE SPENO LIKE \'PL%\' OR SPENO LIKE \'HF%\'")
 
 # PUlls capture data for all ribbon and spotted seals
