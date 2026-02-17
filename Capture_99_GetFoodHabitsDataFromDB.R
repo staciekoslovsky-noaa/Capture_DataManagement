@@ -27,12 +27,13 @@ bones <- RPostgreSQL::dbGetQuery(con, "SELECT food_prey_id, p.speno, bone, bone_
                                  WHERE SPENO LIKE \'PL%\' OR SPENO LIKE \'HF%\'")
 
 # Pulls food habits: measurements data
-measure <- RPostgreSQL::dbGetQuery(con, "SELECT food_prey_id, p.speno, bone_measure_mm, bone, bone_condition, bone_side
+measure <- RPostgreSQL::dbGetQuery(con, "SELECT food_prey_id, p.speno, bone_measure_mm, bone, bone_condition, bone_side, measured_part
                                   FROM capture.tbl_sample_results_food_measure m 
                                   INNER JOIN capture.tbl_sample_results_food_prey p ON p.id = m.food_prey_id
                                   LEFT JOIN capture.lku_prey_bone USING (bone_lku)
                                   LEFT JOIN capture.lku_prey_bone_side USING (bone_side_lku)
                                   LEFT JOIN capture.lku_prey_bone_condition USING (bone_condition_lku)
+                                  LEFT JOIN capture.lku_prey_measured_part USING (measured_part_lku)
                                   WHERE SPENO LIKE \'PL%\' OR SPENO LIKE \'HF%\'")
 
 # PUlls capture data for all ribbon and spotted seals
