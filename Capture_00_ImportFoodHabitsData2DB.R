@@ -18,7 +18,7 @@ RPostgreSQL::dbDisconnect(con)
 rm(con)
 
 # Read CSV file
-data <- read.csv("C:\\Users\\Stacie.Hardy\\Work\\SMK\\Projects\\Capture\\Data\\CaptureSampleResults\\PEP 2022-2024 hard parts_20260205.csv", header = TRUE) %>%
+data <- read.csv("C:\\Users\\Stacie.Hardy\\Work\\SMK\\Projects\\Capture\\Data\\CaptureSampleResults\\PEP hard parts 20260209_PEP.csv", header = TRUE) %>%
   select(-Species, -VialType, -SpeciesName, -ConfCode, -ConfDef, -Edited) %>%
   rename(speno = SampleLabel,
          prey_species_lku = SpeciesCode,
@@ -28,6 +28,7 @@ data <- read.csv("C:\\Users\\Stacie.Hardy\\Work\\SMK\\Projects\\Capture\\Data\\C
          part_count = PartCount,
          bone_condition_lku = PartGrade,
          bone_measure_mm = Measure,
+         measured_part_lku = MeasureCode,
          identified_by = IDInitials,
          date_identified = IDDate,
          prey_comments = Comments) %>%
@@ -105,12 +106,17 @@ import_bone <- data %>%
   select(food_prey_id, bone_lku, bone_side_lku, bone_condition_lku) %>%
   group_by(food_prey_id, bone_lku, bone_side_lku, bone_condition_lku) %>%
   count() %>%
-  rename(bone_count = n)
+  rename(bone_count = n) %>%
+  mutate(bone_condition_lku = ifelse(is.na(bone_condition_lku), "N", bone_condition_lku),
+         bone_side_lku = ifelse(is.na(bone_side_lku), "NA", bone_side_lku))
+
 
 import_measure <- data %>%
   left_join(lku_bone, by = "part_code") %>%
-  select(food_prey_id, bone_measure_mm, bone_condition_lku, bone_lku, bone_side_lku) %>%
-  filter(!is.na(bone_measure_mm))
+  select(food_prey_id, bone_measure_mm, bone_condition_lku, bone_lku, bone_side_lku, measured_part_lku) %>%
+  filter(!is.na(bone_measure_mm)) %>%
+  mutate(bone_condition_lku = ifelse(is.na(bone_condition_lku), "N", bone_condition_lku),
+         bone_side_lku = ifelse(is.na(bone_side_lku), "NA", bone_side_lku))
   
 # Connect to PostgreSQL (for getting information for processing data)
 con <- RPostgreSQL::dbConnect(PostgreSQL(),
